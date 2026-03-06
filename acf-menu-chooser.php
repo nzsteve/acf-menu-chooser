@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * Plugin Name: Advanced Custom Fields: Menu Chooser
  * Plugin URI: https://github.com/reyhoun/acf-menu-chooser
