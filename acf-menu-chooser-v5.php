@@ -5,10 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class acf_field_menu_chooser extends acf_field {
-	
-	
+
+
 	/*
-	*  __construct
+	*  initialize
 	*
 	*  This function will setup the field type data
 	*
@@ -19,62 +19,42 @@ class acf_field_menu_chooser extends acf_field {
 	*  @param	n/a
 	*  @return	n/a
 	*/
-	
-	function __construct() {
-		
-		/*
-		*  name (string) Single word, no spaces. Underscores allowed
-		*/
-		
-		$this->name = 'menu-chooser';
-		
-		
-		/*
-		*  label (string) Multiple words, can include spaces, visible when selecting a field type
-		*/
-		
-		$this->label = __('Menu Chooser', 'acf-menu-chooser');
-		
-		
-		/*
-		*  category (string) basic | content | choice | relational | jquery | layout | CUSTOM GROUP NAME
-		*/
-		
-        $this->category = 'choice';
-		
-		
-		/*
-		*  defaults (array) Array of default settings which are merged into the field object. These are used later in settings
-		*/
-		
-		$this->defaults = array();
-		
-		
-		/*
-		*  l10n (array) Array of strings that are used in JavaScript. This allows JS strings to be translated in PHP and loaded via:
-		*  var message = acf._e('menu-chooser', 'error');
-		*/
-		
-		$this->l10n = array(
-			'error'	=> __('Error! Please enter a higher value', 'acf-menu-chooser'),
+
+	public $supports = array(
+		'escaping_html' => true,
+	);
+
+	function initialize() {
+
+		$this->name     = 'menu-chooser';
+		$this->label    = __( 'Menu Chooser', 'acf-menu-chooser' );
+		$this->category = 'choice';
+		$this->defaults = array(
+			'allow_null' => 0,
 		);
-		
-				
-		// do not delete!
-    	parent::__construct();
-    	
-	}
-	
-
-	
-	function render_field_settings( $field ) {
-		
-		//Noting
+		$this->l10n     = array(
+			'error' => __( 'Error! Please enter a higher value', 'acf-menu-chooser' ),
+		);
 
 	}
-	
 
-	
+
+	function render_field_general_settings( $field ) {
+
+		acf_render_field_setting(
+			$field,
+			array(
+				'label'        => __( 'Allow Null?', 'acf-menu-chooser' ),
+				'instructions' => '',
+				'name'         => 'allow_null',
+				'type'         => 'true_false',
+				'ui'           => 1,
+			)
+		);
+
+	}
+
+
 	function render_field( $field ) {
 
 		$field_value = $field['value'];
@@ -82,6 +62,10 @@ class acf_field_menu_chooser extends acf_field {
 		$menus = wp_get_nav_menus();
 
 		echo '<select name="' . esc_attr( $field['name'] ) . '" class="acf-menu-chooser">';
+
+		if ( $field['allow_null'] ) {
+			echo '<option value="">' . esc_html__( '- Select Menu -', 'acf-menu-chooser' ) . '</option>';
+		}
 
 		if ( ! empty( $menus ) ) {
 			foreach ( $menus as $choice ) {
@@ -92,11 +76,37 @@ class acf_field_menu_chooser extends acf_field {
 		echo '</select>';
 
 	}
-	
+
+
+	/*
+	*  format_value()
+	*
+	*  This filter is applied to the $value after it is loaded from the db and before it is returned to the template.
+	*  ACF 6.2.5+ passes $escape_html to support safe HTML output.
+	*
+	*  @param	mixed	$value		the value found in the database
+	*  @param	int	$post_id	the post ID the value was loaded from
+	*  @param	array	$field		the field array holding all settings
+	*  @param	bool	$escape_html	whether to escape the value for safe HTML output
+	*  @return	mixed	$value		the modified value
+	*/
+
+	function format_value( $value, $post_id, $field, $escape_html = false ) {
+
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		if ( $escape_html ) {
+			return esc_html( $value );
+		}
+
+		return $value;
+
+	}
+
 }
 
 
 // create field
 new acf_field_menu_chooser();
-
-?>
