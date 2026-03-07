@@ -1,0 +1,26 @@
+name: Build Plugin Zip
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build plugin zip
+        run: |
+          mkdir acf-menu-chooser
+          cp -r acf-menu-chooser.php acf-menu-chooser-v5.php readme.txt README.md CHANGELOG.md LICENSE lang acf-menu-chooser/
+          zip -r acf-menu-chooser.zip acf-menu-chooser/
+
+      - name: Upload zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: acf-menu-chooser.zip
