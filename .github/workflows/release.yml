@@ -16,8 +16,7 @@ jobs:
 
       - name: Build plugin zip
         run: |
-          mkdir acf-menu-chooser
-          cp -r acf-menu-chooser.php acf-menu-chooser-v5.php readme.txt README.md CHANGELOG.md LICENSE lang acf-menu-chooser/
+          rsync -av --exclude='.git' --exclude='.github' --exclude='.gitignore' ./ acf-menu-chooser/
           zip -r acf-menu-chooser.zip acf-menu-chooser/
 
       - name: Upload zip to release
