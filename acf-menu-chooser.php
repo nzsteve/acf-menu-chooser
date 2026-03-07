@@ -23,14 +23,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 load_plugin_textdomain( 'acf-menu-chooser', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
 
-function include_field_types_menu_chooser( $version ) {
+if ( ! function_exists( 'acf_menu_chooser_include_field_types' ) ) {
 
-	if ( $version >= 6 ) {
-		include_once 'acf-menu-chooser-v6.php';
-	} else {
-		include_once 'acf-menu-chooser-v5.php';
+	function acf_menu_chooser_include_field_types( $version ) {
+
+		if ( $version >= 6 ) {
+			include_once 'acf-menu-chooser-v6.php';
+		} else {
+			include_once 'acf-menu-chooser-v5.php';
+		}
+
 	}
 
-}
+	add_action( 'acf/include_field_types', 'acf_menu_chooser_include_field_types' );
 
-add_action( 'acf/include_field_types', 'include_field_types_menu_chooser' );
+}
