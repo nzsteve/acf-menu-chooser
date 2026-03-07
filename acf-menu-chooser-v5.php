@@ -1,8 +1,12 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class acf_field_menu_chooser extends acf_field {
-	
-	
+
+
 	/*
 	*  __construct
 	*
@@ -15,88 +19,54 @@ class acf_field_menu_chooser extends acf_field {
 	*  @param	n/a
 	*  @return	n/a
 	*/
-	
+
 	function __construct() {
-		
-		/*
-		*  name (string) Single word, no spaces. Underscores allowed
-		*/
-		
+
 		$this->name = 'menu-chooser';
-		
-		
-		/*
-		*  label (string) Multiple words, can include spaces, visible when selecting a field type
-		*/
-		
-		$this->label = __('Menu Chooser', 'acf-menu-chooser');
-		
-		
-		/*
-		*  category (string) basic | content | choice | relational | jquery | layout | CUSTOM GROUP NAME
-		*/
-		
-        $this->category = 'choice';
-		
-		
-		/*
-		*  defaults (array) Array of default settings which are merged into the field object. These are used later in settings
-		*/
-		
+
+		$this->label = __( 'Menu Chooser', 'acf-menu-chooser' );
+
+		$this->category = 'choice';
+
 		$this->defaults = array();
-		
-		
-		/*
-		*  l10n (array) Array of strings that are used in JavaScript. This allows JS strings to be translated in PHP and loaded via:
-		*  var message = acf._e('menu-chooser', 'error');
-		*/
-		
+
 		$this->l10n = array(
-			'error'	=> __('Error! Please enter a higher value', 'acf-menu-chooser'),
+			'error' => __( 'Error! Please enter a higher value', 'acf-menu-chooser' ),
 		);
-		
-				
+
 		// do not delete!
-    	parent::__construct();
-    	
-	}
-	
+		parent::__construct();
 
-	
+	}
+
+
 	function render_field_settings( $field ) {
-		
-		//Noting
+
+		// No settings for v5.
 
 	}
-	
 
-	
+
 	function render_field( $field ) {
 
 		$field_value = $field['value'];
-							
 
-		$field['choices'] = array();
 		$menus = wp_get_nav_menus();
-							
-		echo '<select name="' . $field['name'] . '" class="acf-menu-chooser">';
 
-				if ( ! empty( $menus ) ) {
-					foreach ( $menus as $choice ) {
-						$field['choices'][ $choice->menu_id ] = $choice->term_id;
-						$field['choices'][ $choice->name ] = $choice->name;
+		echo '<select name="' . esc_attr( $field['name'] ) . '" class="acf-menu-chooser">';
 
-						echo '<option  value="' . $field['choices'][ $choice->menu_id ] . '" ' . selected($field_value, $field['choices'][ $choice->menu_id ], false) . ' >' . $field['choices'][ $choice->name ] . '</option>' ;
-					}
-				}
+		if ( ! empty( $menus ) ) {
+			foreach ( $menus as $choice ) {
+				echo '<option value="' . esc_attr( $choice->term_id ) . '" ' . selected( $field_value, $choice->term_id, false ) . '>' . esc_html( $choice->name ) . '</option>';
+			}
+		}
+
 		echo '</select>';
 
 	}
-	
+
 }
 
 
 // create field
 new acf_field_menu_chooser();
-
-?>
